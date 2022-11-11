@@ -1,0 +1,23 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: 693f3da9f92cd15aa2b8
+            clientSecret: 286c4918012eb81a1fed26ce0502a1d49c94e597
+          google:
+            clientId: 94796379784-9mcf7f3c2avgbn7mg67aclddlnj7h9hk.apps.googleusercontent.com
+            clientSecret: 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
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+server:
+  port: ${ENV_PORT}
