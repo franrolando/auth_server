@@ -28,8 +28,8 @@ public class OAuthService {
                 .encode()
                 .toUriString();
         Map<String, String> params = new HashMap<>();
-        params.put("clientId", "693f3da9f92cd15aa2b8");
-        params.put("clientSecret", "286c4918012eb81a1fed26ce0502a1d49c94e597");
+        params.put("clientId", "asd");
+        params.put("clientSecret", "asd");
         params.put("code", code);
 
         ResponseEntity<GithubResponse> response = restTemplate.exchange(urlTemplate, HttpMethod.GET, entity, GithubResponse.class, params);
