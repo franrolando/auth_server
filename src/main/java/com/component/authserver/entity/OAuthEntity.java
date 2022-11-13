@@ -18,5 +18,6 @@ public class OAuthEntity {
     private String scopes;
     private String authUrl;
     private String redirectUrl;
+    private String serverRedirectUrl;
 
 }
