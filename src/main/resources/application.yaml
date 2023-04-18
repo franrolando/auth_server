@@ -3,13 +3,15 @@ spring:
     oauth2:
       client:
         registration:
-          GOOGLE:
+          google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-          GITHUB:
+            redirect-uri: "{baseUrl}/oauth2/google"
+          github:
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
-          FACEBOOK:
+            redirect-uri: "{baseUrl}/oauth2/github"
+          facebook:
             client-id: ${FACEBOOK_CLIENT_ID}
             client-secret: ${FACEBOOK_CLIENT_SECRET}
   datasource:

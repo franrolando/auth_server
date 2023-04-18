@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/oauth/v2.0/facebook")
+@RequestMapping("/oauth2/facebook")
 public class FacebookController {
 
     @Autowired
     private FacebookService facebookService;
 
-    @GetMapping("/redirect")
+    @PostMapping
     public void redirect(@RequestParam String code, HttpServletResponse resp){
         facebookService.redirect(code,resp);
     }
