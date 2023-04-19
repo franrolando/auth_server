@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "oauth_provider")
 @Data
-public class OAuthEntity {
+public class OAuthProvider {
 
     @Id
     @Enumerated(value = EnumType.STRING)

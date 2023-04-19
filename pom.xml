@@ -14,8 +14,9 @@
     <name>AuthServer</name>
     <description>AuthServer</description>
     <properties>
-        <java.version>20</java.version>
+        <java.version>19</java.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -107,7 +108,6 @@
                     </to>
                     <container>
                         <mainClass>com.component.authserver.AuthServerApplication</mainClass>
-
                         <ports>
                             <port>${ENV_PORT}</port>
                         </ports>
