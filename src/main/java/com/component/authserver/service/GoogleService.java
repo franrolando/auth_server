@@ -1,7 +1,7 @@
 package com.component.authserver.service;
 
 import com.component.authserver.constants.Provider;
-import com.component.authserver.entity.OAuthEntity;
+import com.component.authserver.entity.OAuthProvider;
 import com.component.authserver.repository.OAuthRepository;
 import com.component.authserver.template.LoginTemplate;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -46,7 +46,7 @@ public class GoogleService {
             }
             String credential = optCredential.get();
             String accessToken = credential.substring(credential.indexOf("=") + 1);
-            Optional<OAuthEntity> optionalOAuthEntity = oAuthRepository.findByProvider(Provider.GOOGLE);
+            Optional<OAuthProvider> optionalOAuthEntity = oAuthRepository.findByProvider(Provider.GOOGLE);
 
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                         .setAudience(Collections.singletonList("444454141593-g9r6bkk8rsdr29ufdrc67p7metirh4lp.apps.googleusercontent.com"))

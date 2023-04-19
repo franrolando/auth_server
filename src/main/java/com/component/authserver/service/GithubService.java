@@ -1,7 +1,7 @@
 package com.component.authserver.service;
 
 import com.component.authserver.constants.Provider;
-import com.component.authserver.entity.OAuthEntity;
+import com.component.authserver.entity.OAuthProvider;
 import com.component.authserver.repository.OAuthRepository;
 import com.component.authserver.response.GithubResponse;
 import com.component.authserver.template.LoginTemplate;
@@ -30,7 +30,7 @@ public class GithubService {
     }
 
     public void redirect(String code, HttpServletResponse httpServletResponse){
-        Optional<OAuthEntity> optionalOAuthEntity = oAuthRepository.findByProvider(Provider.GITHUB);
+        Optional<OAuthProvider> optionalOAuthEntity = oAuthRepository.findByProvider(Provider.GITHUB);
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
         HttpEntity<?> entity = new HttpEntity<>(headers);
