@@ -6,11 +6,11 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: "{baseUrl}/oauth2/google"
+            #redirect-uri: "{baseUrl}/oauth2/google"
           github:
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
-            redirect-uri: "{baseUrl}/oauth2/github"
+            #redirect-uri: "{baseUrl}/oauth2/github"
           facebook:
             client-id: ${FACEBOOK_CLIENT_ID}
             client-secret: ${FACEBOOK_CLIENT_SECRET}
@@ -27,3 +27,8 @@ spring:
         default_schema: oauth
 server:
   port: ${ENV_PORT}
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE

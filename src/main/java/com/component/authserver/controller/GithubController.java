@@ -22,9 +22,4 @@ public class GithubController {
         githubService.redirect(model, authentication, resp);
     }
 
-    @GetMapping
-    public void redirect2(Model model, OAuth2AuthenticationToken authentication, HttpServletResponse resp){
-        githubService.redirect(model, authentication, resp);
-    }
-
 }

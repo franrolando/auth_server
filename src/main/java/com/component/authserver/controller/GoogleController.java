@@ -22,9 +22,5 @@ public class GoogleController {
     public void redirect(@RequestBody String body, HttpServletRequest req, HttpServletResponse resp, @CookieValue(name= "g_csrf_token") String csrfTokenCookie){
         googleService.redirect(body, resp, csrfTokenCookie);
     }
-    @GetMapping
-    public void redirect2(@RequestBody String body, HttpServletRequest req, HttpServletResponse resp, @CookieValue(name= "g_csrf_token") String csrfTokenCookie){
-        googleService.redirect(body, resp, csrfTokenCookie);
-    }
 
 }
