@@ -7,4 +7,8 @@ public enum Provider {
     private Provider(String name){
         this.name = name;
     }
+
+    public String getName(){
+        return this.name;
+    }
 }

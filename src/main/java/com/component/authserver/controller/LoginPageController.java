@@ -37,16 +37,16 @@ public class LoginPageController {
                 .as(Iterable.class);
         if (type != ResolvableType.NONE &&
                 ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
-            clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
+                clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
         }
         List<OAuthProvider> oAuthProviderList = oAuthProviderRepository.findAll();
         clientRegistrations.forEach(registration -> {
-            if (oAuthProviderList.stream().filter(oAuthProvider -> oAuthProvider.getProvider().name().equalsIgnoreCase(registration.getRegistrationId())).findFirst().get().isEnabled()){
+            if (oAuthProviderList.stream().filter(oAuthProvider -> oAuthProvider.getProvider().getName().equalsIgnoreCase(registration.getRegistrationId())).findFirst().get().isEnabled()){
                 oauth2AuthenticationUrls.put(registration.getClientName(),
                         authorizationRequestBaseUri + "/" + registration.getRegistrationId());
             }
         });
         model.addAttribute("urls", oauth2AuthenticationUrls);
-        return "oauth_login2";
+        return "oauth_login";
     }
 }
