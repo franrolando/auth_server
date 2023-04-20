@@ -1,9 +1,9 @@
 package com.component.authserver.entity;
 
 import com.component.authserver.constants.Provider;
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
 
 @Entity
 @Table(name = "oauth_provider")

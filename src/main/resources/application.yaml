@@ -1,4 +1,10 @@
+login:
+  application-domain: ${APP_DOMAIN}
 spring:
+  devtools:
+    add-properties: false
+  mustache:
+    check-template-location: false
   security:
     oauth2:
       client:
@@ -25,3 +31,9 @@ spring:
         default_schema: oauth
 server:
   port: ${ENV_PORT}
+vaadin:
+  launch-browser: true
+  whitelisted-packages: com.vaadin,org.vaadin,dev.hilla,com.component.authserver
+logging:
+  level:
+    com.component.authserver: TRACE
