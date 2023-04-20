@@ -13,11 +13,6 @@ public class OAuthProvider {
     @Id
     @Enumerated(value = EnumType.STRING)
     private Provider provider;
-    private String clientId;
-    private String clientSecret;
-    private String scopes;
-    private String authUrl;
-    private String redirectUrl;
-    private Boolean enabled;
+    private boolean enabled;
 
 }

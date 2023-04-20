@@ -33,21 +33,8 @@ public class SecurityConfig {
                 .and()
                 .oauth2Login()
                 .loginPage("/oauth_login")
-                .redirectionEndpoint().baseUri("/oauth2")
-                .and()
-                .successHandler(successHandler())
-                .failureHandler(failureHandler());
+                .defaultSuccessUrl("/loginSuccess");
         return http.build();
-    }
-
-    @Bean
-    private SimpleUrlAuthenticationSuccessHandler successHandler() {
-        return new SimpleUrlAuthenticationSuccessHandler(successUrl);
-    }
-
-    @Bean
-    SimpleUrlAuthenticationFailureHandler failureHandler() {
-        return new SimpleUrlAuthenticationFailureHandler(failureUrl);
     }
 
 }
