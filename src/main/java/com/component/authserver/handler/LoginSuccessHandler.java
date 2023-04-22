@@ -31,12 +31,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     }
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        log.info("Login redirecting to {}", redirectUrl);
+        log.debug("Login redirecting to {}", redirectUrl);
         try {
             URL redirectUrl = new URL(this.redirectUrl);
             if (redirectUrl.getHost().equals(configuration.getApplicationDomain())){
                 response.sendRedirect(this.redirectUrl);
-                log.info("Redirected");
+                log.debug("Redirected");
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);

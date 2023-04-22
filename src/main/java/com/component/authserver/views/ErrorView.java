@@ -36,7 +36,7 @@ public class ErrorView extends VerticalLayout implements HasUrlParameter<RoutePa
         QueryParameters queryParameters = location.getQueryParameters();
         Map<String, List<String>> parametersMap = queryParameters
                 .getParameters();
-        log.info("ErrorView query String {}", parametersMap);
+        log.debug("ErrorView query String {}", parametersMap);
         if (parametersMap.get("error") != null) {
             setLabelText(parametersMap.get("error").get(0));
         }

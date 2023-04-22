@@ -4,6 +4,7 @@ import com.component.authserver.config.Configuration;
 import com.component.authserver.entity.OAuthProvider;
 import com.component.authserver.handler.LoginSuccessHandler;
 import com.component.authserver.repository.OAuthProviderRepository;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
@@ -36,7 +37,7 @@ import java.util.Map;
 @Route(value = LoginView.LOGIN_VIEW_ROUTE)
 @AnonymousAllowed
 @Slf4j
-public class LoginView extends VerticalLayout implements HasUrlParameter<String>, BeforeEnterObserver {
+public class LoginView extends VerticalLayout implements HasUrlParameter<String> {
    public static final String LOGIN_VIEW_ROUTE = "login";
    private static final String OAUTH_URL = "/oauth2/authorization/google";
     private static String authorizationRequestBaseUri
@@ -49,6 +50,7 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
 
     private LoginSuccessHandler loginSuccessHandler;
     private Configuration configuration;
+    private String redirectURL;
    public LoginView(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository, HttpServletRequest request, LoginSuccessHandler loginSuccessHandler, Configuration configuration) {
        this.loginSuccessHandler = loginSuccessHandler;
        this.configuration = configuration;
@@ -76,13 +78,6 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
             }
         });
         setAlignItems(Alignment.CENTER);
-        Button button = new Button("Redirect");
-        button.addClickListener(e2 -> button.getUI().ifPresent(i -> {
-            Map<String, String> params = new HashMap<>();
-            params.put("error", "ERROR");
-            UI.getCurrent().getUI().ifPresent(e -> e.navigate(ErrorView.ERROR_VIEW_ROUTE, QueryParameters.simple(params)));
-        }));
-        add(button);
     }
 
     @Override
@@ -91,34 +86,30 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
         QueryParameters queryParameters = location.getQueryParameters();
         Map<String, List<String>> parametersMap = queryParameters
                 .getParameters();
-        log.info("LoginView query String {}", parametersMap);
-        if (parametersMap.get("redirect_url") != null) {
-                String redirectUrl = parametersMap.get("redirect_url").get(0);
-                String domainName =  redirectUrl.replaceAll("http(s)?://|www\\.|/.*", "");
-                if (domainName.equals(configuration.getApplicationDomain())){
-                    log.info("Url same as domain");
-                    this.loginSuccessHandler.setRedirectUrl(redirectUrl.toString());
-                    oauthButtons(clientRegistrationRepository, oAuthProviderRepository);
-                } else {
-                    redirectErrorView(event, "Redirect URL its different than domain initiated login request");
-                }
-        } else {
-            redirectErrorView(event, "Redirect URL must be not empty");
-        }
+        log.debug("LoginView query String {}", parametersMap);
+        this.redirectURL = parametersMap.get("redirect_url") != null ? parametersMap.get("redirect_url").get(0) : null;
     }
 
-    private void redirectErrorView(BeforeEvent event, String errorMessage) {
+    private void redirectErrorView(String errorMessage) {
         log.info("Redirecting to error view");
         Map<String, String> params = new HashMap<>();
-        params.put("error", "ERRROR");
-        //event.rerouteTo(ErrorView.class, QueryParameters.simple(params));
+        params.put("error", errorMessage);
+        UI.getCurrent().getUI().ifPresent(e -> e.navigate(ErrorView.ERROR_VIEW_ROUTE, QueryParameters.simple(params)));
     }
 
     @Override
-    public void beforeEnter(BeforeEnterEvent event) {
-        log.info("Before enter event");
-        Map<String, String> params = new HashMap<>();
-        params.put("error", "ERROR");
-        UI.getCurrent().getUI().ifPresent(e -> e.navigate(ErrorView.ERROR_VIEW_ROUTE, QueryParameters.simple(params)));
+    public void onAttach(AttachEvent event){
+        if (this.redirectURL != null) {
+            String domainName =  this.redirectURL.replaceAll("http(s)?://|www\\.|/.*", "");
+            if (domainName.equals(configuration.getApplicationDomain())){
+                log.debug("Url same as domain");
+                this.loginSuccessHandler.setRedirectUrl(this.redirectURL);
+                oauthButtons(clientRegistrationRepository, oAuthProviderRepository);
+            } else {
+                redirectErrorView("Redirect URL its different than domain initiated login request");
+            }
+        } else {
+            redirectErrorView("Redirect URL must not be empty");
+        }
     }
 }
