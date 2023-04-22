@@ -3,15 +3,7 @@ package com.component.authserver.views;
 
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.Location;
-import com.vaadin.flow.router.OptionalParameter;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,12 +13,12 @@ import java.util.Map;
 @Route(value = ErrorView.ERROR_VIEW_ROUTE)
 @AnonymousAllowed
 @Slf4j
-public class ErrorView extends VerticalLayout implements HasUrlParameter<RouteParameters>, AfterNavigationObserver {
+public class ErrorView extends VerticalLayout implements HasUrlParameter<RouteParameters> {
     public static final String ERROR_VIEW_ROUTE = "error-view";
 
     private Label errorMessageLabel;
 
-    public ErrorView(){
+    public ErrorView() {
         errorMessageLabel = new Label();
     }
 
@@ -44,11 +36,7 @@ public class ErrorView extends VerticalLayout implements HasUrlParameter<RoutePa
         setAlignItems(Alignment.CENTER);
     }
 
-    @Override
-    public void afterNavigation(AfterNavigationEvent event) {
-    }
-
-    private void setLabelText(String message){
+    private void setLabelText(String message) {
         this.errorMessageLabel.setText(message);
     }
 }

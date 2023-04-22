@@ -1,7 +1,5 @@
 package com.component.authserver.handler;
 
-import com.component.authserver.config.Configuration;
-import com.vaadin.flow.component.UI;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,9 +10,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Optional;
 
 
 @Setter
@@ -23,24 +18,12 @@ import java.util.Optional;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private String redirectUrl;
-    private Optional<UI> ui;
-    private Configuration configuration;
 
-    public LoginSuccessHandler(Configuration configuration){
-        this.configuration = configuration;
-    }
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.debug("Login redirecting to {}", redirectUrl);
-        try {
-            URL redirectUrl = new URL(this.redirectUrl);
-            if (redirectUrl.getHost().equals(configuration.getApplicationDomain())){
-                response.sendRedirect(this.redirectUrl);
-                log.debug("Redirected");
-            }
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+        response.sendRedirect(this.redirectUrl);
+        log.debug("Redirected");
     }
 
 }
