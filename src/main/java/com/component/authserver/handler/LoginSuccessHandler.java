@@ -1,5 +1,6 @@
 package com.component.authserver.handler;
 
+import com.vaadin.flow.spring.security.VaadinSavedRequestAwareAuthenticationSuccessHandler;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,14 +16,16 @@ import java.io.IOException;
 @Setter
 @Slf4j
 @Component
-public class LoginSuccessHandler implements AuthenticationSuccessHandler {
+public class LoginSuccessHandler extends VaadinSavedRequestAwareAuthenticationSuccessHandler {
 
     private String redirectUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        log.info("Login successful to provider {}", authentication);
         log.debug("Login redirecting to {}", redirectUrl);
-        response.sendRedirect(this.redirectUrl);
+        setDefaultTargetUrl(this.redirectUrl);
+        super.onAuthenticationSuccess(request,response,authentication);
         log.debug("Redirected");
     }
 
