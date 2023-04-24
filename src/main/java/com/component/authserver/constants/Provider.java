@@ -12,4 +12,5 @@ public enum Provider {
     public String getName() {
         return this.name;
     }
+
 }

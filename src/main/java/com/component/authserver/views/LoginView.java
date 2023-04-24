@@ -16,10 +16,12 @@ import org.springframework.core.ResolvableType;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 
+import javax.swing.text.html.Option;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Route(value = LoginView.LOGIN_VIEW_ROUTE)
 @AnonymousAllowed
@@ -55,12 +57,16 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
             clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
         }
         List<OAuthProvider> oAuthProviderList = oAuthProviderRepository.findAll();
+        log.info("There are {} OAuth providers configured", oAuthProviderList.size());
         clientRegistrations.forEach(registration -> {
-            OAuthProvider oAuthProvider1 = oAuthProviderList.stream().filter(oAuthProvider -> oAuthProvider.getProvider().getName().equalsIgnoreCase(registration.getRegistrationId())).findFirst().get();
-            if (oAuthProvider1.isEnabled()) {
-                Anchor loginLink = new Anchor(OAUTH_URL + registration.getRegistrationId(), MessageFormat.format("Login with {0}", oAuthProvider1.getProvider().getName()));
-                add(loginLink);
-                loginLink.getElement().setAttribute("router-ignore", true);
+            Optional<OAuthProvider> optOAuthProvider = oAuthProviderList.stream().filter(oAuthProvider -> oAuthProvider.getProvider().getName().equalsIgnoreCase(registration.getRegistrationId())).findFirst();
+            if (optOAuthProvider.isPresent()){
+                OAuthProvider oAuthProvider = optOAuthProvider.get();
+                if (oAuthProvider.isEnabled()) {
+                    Anchor loginLink = new Anchor(OAUTH_URL + registration.getRegistrationId(), MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName()));
+                    add(loginLink);
+                    loginLink.getElement().setAttribute("router-ignore", true);
+                }
             }
         });
         setAlignItems(Alignment.CENTER);
