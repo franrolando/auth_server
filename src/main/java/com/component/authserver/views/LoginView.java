@@ -5,9 +5,17 @@ import com.component.authserver.entity.OAuthProvider;
 import com.component.authserver.handler.LoginSuccessHandler;
 import com.component.authserver.repository.OAuthProviderRepository;
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.littemplate.LitTemplate;
+import com.vaadin.flow.component.template.Id;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +24,6 @@ import org.springframework.core.ResolvableType;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 
-import javax.swing.text.html.Option;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +33,21 @@ import java.util.Optional;
 @Route(value = LoginView.LOGIN_VIEW_ROUTE)
 @AnonymousAllowed
 @Slf4j
-public class LoginView extends VerticalLayout implements HasUrlParameter<String> {
+@Tag("login-view")
+@JsModule("./login/login-view.js")
+public class LoginView extends LitTemplate implements HasUrlParameter<String> {
+
+    @Id("usernameTextField")
+    private TextField usernameTextField;
+    @Id("passwordTextField")
+    private PasswordField passwordTextField;
+    @Id("forgotPasswordButton")
+    private Button forgotPasswordButton;
+    @Id("loginButton")
+    private Button loginButton;
+    @Id("oauthDiv")
+    private Div oauthDiv;
+
     public static final String LOGIN_VIEW_ROUTE = "login";
     private static final String OAUTH_URL = "/oauth2/authorization/";
     private static String authorizationRequestBaseUri
@@ -46,6 +67,12 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
         this.configuration = configuration;
         this.clientRegistrationRepository = clientRegistrationRepository;
         this.oAuthProviderRepository = oAuthProviderRepository;
+        init();
+    }
+
+    public void init() {
+        forgotPasswordButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        this.loginButton = new Button("Login");
     }
 
     private void oauthButtons(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository) {
@@ -60,16 +87,18 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
         log.info("There are {} OAuth providers configured", oAuthProviderList.size());
         clientRegistrations.forEach(registration -> {
             Optional<OAuthProvider> optOAuthProvider = oAuthProviderList.stream().filter(oAuthProvider -> oAuthProvider.getProvider().getName().equalsIgnoreCase(registration.getRegistrationId())).findFirst();
-            if (optOAuthProvider.isPresent()){
+            if (optOAuthProvider.isPresent()) {
                 OAuthProvider oAuthProvider = optOAuthProvider.get();
                 if (oAuthProvider.isEnabled()) {
+                    Button button = new Button("<a router-ignore href="+OAUTH_URL + registration.getRegistrationId()+">"+MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName())+"</a>");
                     Anchor loginLink = new Anchor(OAUTH_URL + registration.getRegistrationId(), MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName()));
-                    add(loginLink);
                     loginLink.getElement().setAttribute("router-ignore", true);
+                    loginLink.getElement().setAttribute("theme", "theme=\"button primary large\"");
+                    oauthDiv.add(loginLink);
+                    oauthDiv.add(button);
                 }
             }
         });
-        setAlignItems(Alignment.CENTER);
     }
 
     @Override

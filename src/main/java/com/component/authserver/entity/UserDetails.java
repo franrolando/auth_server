@@ -1,19 +1,14 @@
 package com.component.authserver.entity;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -32,6 +27,8 @@ public class UserDetails implements Serializable {
     private UUID uuid;
     @JdbcTypeCode(SqlTypes.JSON)
     private String userAttributes;
+    @NotNull
+    private String email;
     private LocalDateTime lastLogin;
 
     @ManyToOne

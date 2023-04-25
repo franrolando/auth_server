@@ -6,6 +6,7 @@ import com.component.authserver.entity.UserDetails;
 import com.component.authserver.entity.UserDetailsId;
 import com.component.authserver.repository.OAuthProviderRepository;
 import com.component.authserver.repository.UserDetailsRepository;
+import com.component.authserver.strategy.UserEmailStrategyImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.helger.commons.hashcode.HashCodeGenerator;
@@ -18,19 +19,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
 import org.apache.commons.compress.archivers.zip.PKWareExtraHeader;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Setter
@@ -44,24 +50,27 @@ public class LoginSuccessHandler extends VaadinSavedRequestAwareAuthenticationSu
     private UserDetailsRepository userDetailsRepository;
     private OAuthProviderRepository oAuthProviderRepository;
 
-    public LoginSuccessHandler(OAuth2AuthorizedClientService authorizedClientService, UserDetailsRepository userDetailsRepository, OAuthProviderRepository oAuthProviderRepository){
+    private UserEmailStrategyImpl userEmailStrategy;
+
+    public LoginSuccessHandler(OAuth2AuthorizedClientService authorizedClientService, UserDetailsRepository userDetailsRepository, OAuthProviderRepository oAuthProviderRepository, UserEmailStrategyImpl userEmailStrategy){
         this.authorizedClientService = authorizedClientService;
         this.userDetailsRepository = userDetailsRepository;
         this.oAuthProviderRepository = oAuthProviderRepository;
+        this.userEmailStrategy = userEmailStrategy;
     }
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.debug("Login will redirect to {}", redirectUrl);
         OAuth2AuthenticationToken auth = (OAuth2AuthenticationToken) authentication;
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        log.debug("OAuth2 User {}", oAuth2User);
+        DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
         setDefaultTargetUrl(this.redirectUrl);
         OAuth2AuthorizedClient client = authorizedClientService
                 .loadAuthorizedClient(
                         auth.getAuthorizedClientRegistrationId(),
                         authentication.getName());
-        log.info("Authorized client {}", client);
         OAuthProvider oauthProvider = oAuthProviderRepository.findByProvider(Provider.valueOf(auth.getAuthorizedClientRegistrationId().toUpperCase())).get();
+
         UserDetailsId userDetailsId = UserDetailsId.builder()
                 .userId(oAuth2User.getName())
                 .fkProviderId(oauthProvider.getProviderId())
@@ -73,10 +82,16 @@ public class LoginSuccessHandler extends VaadinSavedRequestAwareAuthenticationSu
                 .id(userDetailsId)
                 .uuid(UUID.randomUUID())
                 .userAttributes(objectMapper.writeValueAsString(oAuth2User.getAttributes()))
+                .email(userEmailStrategy.getUserEmail(authentication))
                 .lastLogin(LocalDateTime.now())
                 .provider(oauthProvider)
                 .build();
-        userDetailsRepository.save(userDetails);
+        Optional<UserDetails> existingUser = userDetailsRepository.findByEmail(userDetails.getEmail());
+        if (!existingUser.isPresent()){
+            userDetailsRepository.save(userDetails);
+        } else {
+            log.info("User already logged with {} provider", existingUser.get().getProvider().getProvider());
+        }
         super.onAuthenticationSuccess(request,response,authentication);
         log.debug("Redirected");
     }
