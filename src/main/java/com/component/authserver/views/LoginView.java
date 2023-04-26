@@ -1,5 +1,6 @@
 package com.component.authserver.views;
 
+import com.component.authserver.component.ButtonAnchor;
 import com.component.authserver.config.Configuration;
 import com.component.authserver.entity.OAuthProvider;
 import com.component.authserver.handler.LoginSuccessHandler;
@@ -20,6 +21,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 import org.springframework.core.ResolvableType;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -72,7 +74,6 @@ public class LoginView extends LitTemplate implements HasUrlParameter<String> {
 
     public void init() {
         forgotPasswordButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-        this.loginButton = new Button("Login");
     }
 
     private void oauthButtons(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository) {
@@ -90,12 +91,14 @@ public class LoginView extends LitTemplate implements HasUrlParameter<String> {
             if (optOAuthProvider.isPresent()) {
                 OAuthProvider oAuthProvider = optOAuthProvider.get();
                 if (oAuthProvider.isEnabled()) {
-                    Button button = new Button("<a router-ignore href="+OAUTH_URL + registration.getRegistrationId()+">"+MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName())+"</a>");
-                    Anchor loginLink = new Anchor(OAUTH_URL + registration.getRegistrationId(), MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName()));
-                    loginLink.getElement().setAttribute("router-ignore", true);
-                    loginLink.getElement().setAttribute("theme", "theme=\"button primary large\"");
-                    oauthDiv.add(loginLink);
-                    oauthDiv.add(button);
+                    String icon = "";
+                    switch (oAuthProvider.getProvider()) {
+                        case GOOGLE -> icon = "vaadin:google-plus-square";
+                        case FACEBOOK -> icon = "vaadin:facebook-square";
+                        case GITHUB -> icon = "vaadin:google-plus-square";
+                    }
+                    ButtonAnchor buttonAnchor = new ButtonAnchor(icon, MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName()), OAUTH_URL + registration.getRegistrationId());
+                    oauthDiv.add(buttonAnchor);
                 }
             }
         });

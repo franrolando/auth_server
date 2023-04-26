@@ -16,9 +16,6 @@ class LoginView extends LitElement {
                 <div id="oauthDiv" style="display: grid;grid-template-columns: repeat(3,1fr)">
 
                 </div>
-                <vaadin-button router-ignore=true id="loginButton">
-                    <a router-ignore=true href="/oauth2/authorization/google">GOOGLE</a>
-                </vaadin-button>
             </div>
       
         `;
