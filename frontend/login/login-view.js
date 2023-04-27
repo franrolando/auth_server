@@ -13,7 +13,7 @@ class LoginView extends LitElement {
                     <vaadin-button id="forgotPasswordButton">Forgot password</vaadin-button>
                     <vaadin-button id="loginButton">Sign in</vaadin-button>
                 </div>
-                <div id="oauthDiv" style="display: grid;grid-template-columns: repeat(3,1fr)">
+                <div id="oauthDiv" style="display: grid;grid-template-columns: repeat(3,1fr); grid-column-gap: 20px">
 
                 </div>
             </div>

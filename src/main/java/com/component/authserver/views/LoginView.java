@@ -18,6 +18,7 @@ import com.vaadin.flow.component.template.Id;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -91,13 +92,23 @@ public class LoginView extends LitTemplate implements HasUrlParameter<String> {
             if (optOAuthProvider.isPresent()) {
                 OAuthProvider oAuthProvider = optOAuthProvider.get();
                 if (oAuthProvider.isEnabled()) {
-                    String icon = "";
+                    String src = "";
+                    String message = "";
                     switch (oAuthProvider.getProvider()) {
-                        case GOOGLE -> icon = "vaadin:google-plus-square";
-                        case FACEBOOK -> icon = "vaadin:facebook-square";
-                        case GITHUB -> icon = "vaadin:google-plus-square";
+                        case GOOGLE -> {
+                            src = "/META-INF/resources/brandguidelines/google/google_signin_buttons/web/2x/btn_google_signin_light_normal_web@2x.png";
+                        }
+                        case FACEBOOK -> {
+                            src = "";
+                            message = MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName());
+
+                        }
+                        case GITHUB -> {
+                            src = "";
+                            message = MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName());
+                        }
                     }
-                    ButtonAnchor buttonAnchor = new ButtonAnchor(icon, MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName()), OAUTH_URL + registration.getRegistrationId());
+                    ButtonAnchor buttonAnchor = new ButtonAnchor(src, message, OAUTH_URL + registration.getRegistrationId());
                     oauthDiv.add(buttonAnchor);
                 }
             }

@@ -18,7 +18,7 @@
         <vaadin.version>24.0.4</vaadin.version>
         <node.version>v18.0.0</node.version>
     </properties>
-
+    <packaging>jar</packaging>
     <repositories>
         <repository>
             <id>Vaadin Directory</id>
