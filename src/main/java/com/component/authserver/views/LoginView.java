@@ -10,6 +10,7 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -96,12 +97,11 @@ public class LoginView extends LitTemplate implements HasUrlParameter<String> {
                     String message = "";
                     switch (oAuthProvider.getProvider()) {
                         case GOOGLE -> {
-                            src = "/META-INF/resources/brandguidelines/google/google_signin_buttons/web/2x/btn_google_signin_light_normal_web@2x.png";
+                            src = "/META-INF/resources/google/google_signin_buttons/web/1x/btn_google_signin_dark_normal_web.png";
                         }
                         case FACEBOOK -> {
                             src = "";
                             message = MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName());
-
                         }
                         case GITHUB -> {
                             src = "";

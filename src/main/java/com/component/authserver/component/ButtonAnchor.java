@@ -24,10 +24,12 @@ public class ButtonAnchor extends LitTemplate {
     private Anchor anchor;
 
     public ButtonAnchor(String src, String text, String href){
-        StreamResource imageResource = new StreamResource("btn_google_signin_light_normal_web.png",
+        StreamResource imageResource = new StreamResource("btn_google_signin_dark_normal_web.png",
                 () -> getClass().getResourceAsStream(src));
         img.setSrc(imageResource);
-        img.addClickListener(e -> UI.getCurrent().navigate("/oauth2/authorization/google"));
+        img.setSizeUndefined();
+        anchor.setSizeUndefined();
+        button.setSizeUndefined();
         getElement().setProperty("src", src);
         getElement().setProperty("name", text);
         getElement().setProperty("href", href);

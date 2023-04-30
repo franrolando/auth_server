@@ -1,7 +1,6 @@
 
 import { html, LitElement } from 'lit';
 import '@vaadin/button';
-import {PolymerElement} from "@polymer/polymer";
 
 class ButtonAnchor extends LitElement {
 
@@ -14,10 +13,12 @@ class ButtonAnchor extends LitElement {
     }
     render() {
         return html`
-                <vaadin-button router-ignore id="button" style=";z-index: 2">
-                    <img src="${this.src}" id="img" onclick="" style="z-index: 3">
-                    <a router-ignore id="anchor" href="${this.href}" style="text-decoration: none; color: black;background-color:transparent !important;z-index: 4">${this.name}</a>
-                </vaadin-button>
+                    <a router-ignore id="anchor" href="${this.href}" style="text-decoration: none; color: black;background-color:transparent !important;">
+                        <vaadin-button id="button" style="margin: 0; padding: 0">
+                            <img src="${this.src}" id="img">${this.name}
+                        </vaadin-button>
+                    </a>
+                
         `;
     }
 
