@@ -1,5 +1,5 @@
 
-import { html, LitElement } from 'lit';
+import { css, html, LitElement } from 'lit';
 import '@vaadin/button';
 
 class ButtonAnchor extends LitElement {
@@ -13,13 +13,20 @@ class ButtonAnchor extends LitElement {
     }
     render() {
         return html`
-                    <a router-ignore id="anchor" href="${this.href}" style="text-decoration: none; color: black;background-color:transparent !important;">
-                        <vaadin-button id="button" style="margin: 0; padding: 0">
-                            <img src="${this.src}" id="img">${this.name}
-                        </vaadin-button>
-                    </a>
-                
+            <a router-ignore id="anchor" href="${this.href}" style="text-decoration: none; color: black;background-color:transparent !important;">
+                <vaadin-button id="button" style="width: 300px; height: 50px">
+                    <img src="${this.src}" id="img">
+                    <span>
+                        ${this.name}
+                    </span>
+                </vaadin-button>
+            </a>
         `;
+    }
+
+    static get styles() {
+        return css`
+    `;
     }
 
 }

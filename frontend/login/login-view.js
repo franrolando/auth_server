@@ -11,9 +11,10 @@ class LoginView extends LitElement {
                     <vaadin-text-field id="usernameTextField" label="Username" placeholder="Username"></vaadin-text-field>
                     <vaadin-password-field id="passwordTextField" label="Password" placeholder="Password" ></vaadin-password-field>
                     <vaadin-button id="forgotPasswordButton">Forgot password</vaadin-button>
-                    <vaadin-button id="loginButton">Sign in</vaadin-button>
+                    <vaadin-button id="signInOButton">Sign in</vaadin-button>
+                    <vaadin-button id="signUpButton">Sign up</vaadin-button>
                 </div>
-                <div id="oauthDiv" style="display: grid;grid-template-columns: repeat(3,1fr); grid-column-gap: 20px">
+                <div id="oauthDiv" style="align-items:center; height:auto; width: 100%; display: flex; flex-direction: column">
                 </div>
             </div>
       

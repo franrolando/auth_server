@@ -5,25 +5,23 @@ import com.component.authserver.config.Configuration;
 import com.component.authserver.entity.OAuthProvider;
 import com.component.authserver.handler.LoginSuccessHandler;
 import com.component.authserver.repository.OAuthProviderRepository;
+import com.component.authserver.service.ILoginService;
+import com.component.authserver.service.LoginService;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.littemplate.LitTemplate;
 import com.vaadin.flow.component.template.Id;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
-import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 import org.springframework.core.ResolvableType;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -47,8 +45,10 @@ public class LoginView extends LitTemplate implements HasUrlParameter<String> {
     private PasswordField passwordTextField;
     @Id("forgotPasswordButton")
     private Button forgotPasswordButton;
-    @Id("loginButton")
-    private Button loginButton;
+    @Id("signInButton")
+    private Button signInButton;
+    @Id("signUpButton")
+    private Button signUpButton;
     @Id("oauthDiv")
     private Div oauthDiv;
 
@@ -61,21 +61,26 @@ public class LoginView extends LitTemplate implements HasUrlParameter<String> {
 
     private ClientRegistrationRepository clientRegistrationRepository;
     private OAuthProviderRepository oAuthProviderRepository;
+    private ILoginService iLoginService;
 
     private LoginSuccessHandler loginSuccessHandler;
     private Configuration configuration;
     private String redirectURL;
 
-    public LoginView(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository, HttpServletRequest request, LoginSuccessHandler loginSuccessHandler, Configuration configuration) {
+    public LoginView(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository, HttpServletRequest request, LoginSuccessHandler loginSuccessHandler, Configuration configuration, ILoginService iLoginService) {
         this.loginSuccessHandler = loginSuccessHandler;
         this.configuration = configuration;
         this.clientRegistrationRepository = clientRegistrationRepository;
         this.oAuthProviderRepository = oAuthProviderRepository;
+        this.iLoginService = iLoginService;
         init();
     }
 
     public void init() {
         forgotPasswordButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        signInButton.addClickListener(e->{
+            iLoginService.signIn(usernameTextField.getValue(), passwordTextField.getValue());
+        });
     }
 
     private void oauthButtons(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository) {
@@ -94,21 +99,32 @@ public class LoginView extends LitTemplate implements HasUrlParameter<String> {
                 OAuthProvider oAuthProvider = optOAuthProvider.get();
                 if (oAuthProvider.isEnabled()) {
                     String src = "";
-                    String message = "";
+                    String text = "";
+                    String filename = "";
+                    String backgroundColor = "";
+                    String textColor = "";
                     switch (oAuthProvider.getProvider()) {
                         case GOOGLE -> {
-                            src = "/META-INF/resources/google/google_signin_buttons/web/1x/btn_google_signin_dark_normal_web.png";
+                            backgroundColor = "#EFEFEF";
+                            textColor = "black";
+                            filename = "icons8-google.svg";
+                            text = MessageFormat.format("Sign in with {0}", oAuthProvider.getProvider().getName());
                         }
                         case FACEBOOK -> {
-                            src = "";
-                            message = MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName());
+                            backgroundColor = "#16528C";
+                            textColor = "white";
+                            filename = "icons8-facebook.svg";
+                            text = MessageFormat.format("Sign in with {0}", oAuthProvider.getProvider().getName());
                         }
                         case GITHUB -> {
-                            src = "";
-                            message = MessageFormat.format("Login with {0}", oAuthProvider.getProvider().getName());
+                            backgroundColor = "#424141";
+                            textColor = "white";
+                            filename = "icons8-github.svg";
+                            text = MessageFormat.format("Sign in with {0}", oAuthProvider.getProvider().getName());
                         }
                     }
-                    ButtonAnchor buttonAnchor = new ButtonAnchor(src, message, OAUTH_URL + registration.getRegistrationId());
+                    src = "/META-INF/resources/login/icons/" + filename;
+                    ButtonAnchor buttonAnchor = new ButtonAnchor(src, filename, text, OAUTH_URL + registration.getRegistrationId(), backgroundColor, textColor);
                     oauthDiv.add(buttonAnchor);
                 }
             }
