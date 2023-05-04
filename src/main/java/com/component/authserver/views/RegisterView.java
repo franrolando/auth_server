@@ -31,27 +31,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Route(value = LoginView.LOGIN_VIEW_ROUTE)
+@Route(value = RegisterView.REGISTER_USER_VIEW_ROUTE)
 @AnonymousAllowed
 @Slf4j
-@Tag("login-view")
-@JsModule("./views/login-view.js")
-public class LoginView extends LitTemplate implements HasUrlParameter<String> {
+@Tag("register-user")
+@JsModule("./views/register-user.js")
+public class RegisterView extends LitTemplate implements HasUrlParameter<String> {
 
     @Id("usernameTextField")
     private TextField usernameTextField;
     @Id("passwordTextField")
     private PasswordField passwordTextField;
-    @Id("forgotPasswordButton")
-    private Button forgotPasswordButton;
-    @Id("signInButton")
-    private Button signInButton;
     @Id("signUpButton")
     private Button signUpButton;
-    @Id("oauthDiv")
-    private Div oauthDiv;
 
-    public static final String LOGIN_VIEW_ROUTE = "login";
+    public static final String REGISTER_USER_VIEW_ROUTE = "register";
     private static final String OAUTH_URL = "/oauth2/authorization/";
     private static String authorizationRequestBaseUri
             = "oauth2/authorization";
@@ -66,7 +60,7 @@ public class LoginView extends LitTemplate implements HasUrlParameter<String> {
     private Configuration configuration;
     private String redirectURL;
 
-    public LoginView(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository, HttpServletRequest request, OAuthLoginSuccessHandler oAuthLoginSuccessHandler, Configuration configuration, ILoginService iLoginService) {
+    public RegisterView(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository, HttpServletRequest request, OAuthLoginSuccessHandler oAuthLoginSuccessHandler, Configuration configuration, ILoginService iLoginService) {
         this.oAuthLoginSuccessHandler = oAuthLoginSuccessHandler;
         this.configuration = configuration;
         this.clientRegistrationRepository = clientRegistrationRepository;
@@ -76,62 +70,8 @@ public class LoginView extends LitTemplate implements HasUrlParameter<String> {
     }
 
     public void init() {
-        forgotPasswordButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-        signInButton.addClickListener(e->{
-            iLoginService.signIn(usernameTextField.getValue(), passwordTextField.getValue());
-        });
         signUpButton.addClickListener(e -> {
-            Map<String, String> params = new HashMap<>();
-            params.put("redirect_url", redirectURL);
-            UI.getCurrent().navigate(RegisterView.class, QueryParameters.simple(params));
-        });
-    }
 
-    private void oauthButtons(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository) {
-        Iterable<ClientRegistration> clientRegistrations = null;
-        ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository)
-                .as(Iterable.class);
-        if (type != ResolvableType.NONE &&
-                ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
-            clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
-        }
-        List<OAuthProvider> oAuthProviderList = oAuthProviderRepository.findAll();
-        log.info("There are {} OAuth providers configured", oAuthProviderList.size());
-        clientRegistrations.forEach(registration -> {
-            Optional<OAuthProvider> optOAuthProvider = oAuthProviderList.stream().filter(oAuthProvider -> oAuthProvider.getProvider().getName().equalsIgnoreCase(registration.getRegistrationId())).findFirst();
-            if (optOAuthProvider.isPresent()) {
-                OAuthProvider oAuthProvider = optOAuthProvider.get();
-                if (oAuthProvider.isEnabled()) {
-                    String src = "";
-                    String text = "";
-                    String filename = "";
-                    String backgroundColor = "";
-                    String textColor = "";
-                    switch (oAuthProvider.getProvider()) {
-                        case GOOGLE -> {
-                            backgroundColor = "#EFEFEF";
-                            textColor = "black";
-                            filename = "icons8-google.svg";
-                            text = MessageFormat.format("Sign in with {0}", oAuthProvider.getProvider().getName());
-                        }
-                        case FACEBOOK -> {
-                            backgroundColor = "#16528C";
-                            textColor = "white";
-                            filename = "icons8-facebook.svg";
-                            text = MessageFormat.format("Sign in with {0}", oAuthProvider.getProvider().getName());
-                        }
-                        case GITHUB -> {
-                            backgroundColor = "#424141";
-                            textColor = "white";
-                            filename = "icons8-github.svg";
-                            text = MessageFormat.format("Sign in with {0}", oAuthProvider.getProvider().getName());
-                        }
-                    }
-                    src = "/META-INF/resources/login/icons/" + filename;
-                    ButtonAnchor buttonAnchor = new ButtonAnchor(src, filename, text, OAUTH_URL + registration.getRegistrationId(), backgroundColor, textColor);
-                    oauthDiv.add(buttonAnchor);
-                }
-            }
         });
     }
 
@@ -159,7 +99,6 @@ public class LoginView extends LitTemplate implements HasUrlParameter<String> {
             if (domainName.equals(configuration.getApplicationDomain())) {
                 log.debug("Url same as domain");
                 this.oAuthLoginSuccessHandler.setRedirectUrl(this.redirectURL);
-                oauthButtons(clientRegistrationRepository, oAuthProviderRepository);
             } else {
                 redirectErrorView("Redirect URL its different than domain initiated login request");
             }

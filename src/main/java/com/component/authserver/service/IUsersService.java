@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface IUsersService {
 
     Optional<Users> findByUsernameAndPassword(String username, String password);
+
+    void save(String username, String password);
 }

@@ -2,5 +2,6 @@ package com.component.authserver.service;
 
 public interface ILoginService {
 
-    boolean signIn(String username, String password);
+    void signIn(String username, String password);
+    void signUp(String username, String password);
 }

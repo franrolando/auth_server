@@ -16,4 +16,14 @@ public class UsersService implements IUsersService {
     public Optional<Users> findByUsernameAndPassword(String username, String password) {
         return Optional.empty();
     }
+
+    @Override
+    public void save(String username, String password) {
+        Users user = Users.builder()
+                .username(username)
+                .password(password)
+                .build();
+        usersRepository.save(user);
+    }
+
 }

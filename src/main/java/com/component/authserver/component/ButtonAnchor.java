@@ -17,7 +17,7 @@ import com.vaadin.flow.server.StreamResource;
 import org.springframework.util.StringUtils;
 
 @Tag("button-anchor")
-@JsModule("./component/button-anchor.js")
+@JsModule("./components/button-anchor.js")
 public class ButtonAnchor extends LitTemplate {
 
     @Id("button")

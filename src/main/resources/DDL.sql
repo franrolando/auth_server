@@ -22,3 +22,11 @@ create table if not exists oauth.user_details(
     constraint fk_provider_id foreign key (fk_provider_id) references oauth.oauth_provider(provider_id)
 );
 
+create table if not exists oauth.users(
+    uuid UUID not null unique,
+    email text not null,
+    password text not null unique,
+    last_login timestamp not null,
+    constraint pk_users_ primary key (uuid)
+);
+
