@@ -88,6 +88,7 @@ public class LoginView extends LitTemplate {
             Map<String, String> params = new HashMap<>();
             UI.getCurrent().navigate(RegisterView.class, QueryParameters.simple(params));
         });
+        oauthButtons(this.clientRegistrationRepository, this.oAuthProviderRepository);
     }
 
     private void oauthButtons(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository) {
