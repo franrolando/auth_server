@@ -279,10 +279,10 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <customLoginConfiguration>
+                        <configuration>
                             <trimStackTrace>false</trimStackTrace>
                             <enableAssertions>true</enableAssertions>
-                        </customLoginConfiguration>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
