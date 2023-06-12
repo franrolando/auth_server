@@ -130,6 +130,10 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -139,7 +143,7 @@
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.3.1</version>
-                <configuration>
+                <customLoginConfiguration>
                     <from><image>openjdk@sha256:ce65761a7b2a0e7c1932e7c157cf8bf5c7ea1d9c407f1b81118053f8d8ac8fb0</image></from>
                     <to>
                         <image>registry.hub.docker.com/franff96/auth_server</image>
@@ -151,24 +155,24 @@
                         </ports>
                         <format>OCI</format>
                     </container>
-                </configuration>
+                </customLoginConfiguration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
+                <customLoginConfiguration>
                     <source>19</source>
                     <target>19</target>
-                </configuration>
+                </customLoginConfiguration>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
+                <customLoginConfiguration>
                     <jvmArguments>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5106</jvmArguments>
                     <wait>500</wait>
                     <maxAttempts>240</maxAttempts>
-                </configuration>
+                </customLoginConfiguration>
             </plugin>
             <plugin>
                 <groupId>com.vaadin</groupId>
@@ -195,9 +199,9 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
+                <customLoginConfiguration>
                     <nodeVersion>${node.version}</nodeVersion>
-                </configuration>
+                </customLoginConfiguration>
             </plugin>
         </plugins>
     </build>
@@ -275,10 +279,10 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
+                        <customLoginConfiguration>
                             <trimStackTrace>false</trimStackTrace>
                             <enableAssertions>true</enableAssertions>
-                        </configuration>
+                        </customLoginConfiguration>
                     </plugin>
                 </plugins>
             </build>

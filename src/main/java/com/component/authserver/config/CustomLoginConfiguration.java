@@ -8,9 +8,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "login")
 @Getter
 @Setter
-public class Configuration {
+public class CustomLoginConfiguration {
 
     private String applicationDomain;
     private String redirectUrl;
+    private boolean enableRedirect;
+    private boolean customLogin;
 
 }

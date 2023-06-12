@@ -1,12 +1,12 @@
 package com.component.authserver.views;
 
 import com.component.authserver.component.ButtonAnchor;
-import com.component.authserver.config.Configuration;
+import com.component.authserver.config.CustomLoginConfiguration;
 import com.component.authserver.entity.OAuthProvider;
 import com.component.authserver.handler.OAuthLoginSuccessHandler;
 import com.component.authserver.repository.OAuthProviderRepository;
 import com.component.authserver.service.ILoginService;
-import com.vaadin.flow.component.AttachEvent;
+import com.component.authserver.service.VaadinLoginService;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -21,11 +21,11 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ResolvableType;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -64,11 +64,11 @@ public class LoginView extends LitTemplate {
     private ILoginService iLoginService;
 
     private OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
-    private Configuration configuration;
+    private CustomLoginConfiguration customLoginConfiguration;
 
-    public LoginView(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository, HttpServletRequest request, OAuthLoginSuccessHandler oAuthLoginSuccessHandler, Configuration configuration, ILoginService iLoginService) {
+    public LoginView(ClientRegistrationRepository clientRegistrationRepository, OAuthProviderRepository oAuthProviderRepository, HttpServletRequest request, OAuthLoginSuccessHandler oAuthLoginSuccessHandler, CustomLoginConfiguration customLoginConfiguration, @Qualifier(VaadinLoginService.NAME) ILoginService iLoginService) {
         this.oAuthLoginSuccessHandler = oAuthLoginSuccessHandler;
-        this.configuration = configuration;
+        this.customLoginConfiguration = customLoginConfiguration;
         this.clientRegistrationRepository = clientRegistrationRepository;
         this.oAuthProviderRepository = oAuthProviderRepository;
         this.iLoginService = iLoginService;
@@ -78,11 +78,7 @@ public class LoginView extends LitTemplate {
     public void init() {
         forgotPasswordButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         signInButton.addClickListener(e->{
-            try {
                 iLoginService.signIn(usernameTextField.getValue(), passwordTextField.getValue());
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
         });
         signUpButton.addClickListener(e -> {
             Map<String, String> params = new HashMap<>();

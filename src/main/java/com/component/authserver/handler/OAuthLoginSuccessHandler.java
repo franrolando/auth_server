@@ -1,6 +1,6 @@
 package com.component.authserver.handler;
 
-import com.component.authserver.config.Configuration;
+import com.component.authserver.config.CustomLoginConfiguration;
 import com.component.authserver.constants.Provider;
 import com.component.authserver.entity.OAuthProvider;
 import com.component.authserver.entity.UserDetails;
@@ -32,21 +32,21 @@ import java.util.*;
 @Component
 public class OAuthLoginSuccessHandler extends VaadinSavedRequestAwareAuthenticationSuccessHandler {
 
-    private Configuration configuration;
+    private CustomLoginConfiguration customLoginConfiguration;
     private UserDetailsRepository userDetailsRepository;
     private OAuthProviderRepository oAuthProviderRepository;
     private UserEmailStrategyImpl userEmailStrategy;
 
-    public OAuthLoginSuccessHandler(OAuth2AuthorizedClientService authorizedClientService, UserDetailsRepository userDetailsRepository, OAuthProviderRepository oAuthProviderRepository, UserEmailStrategyImpl userEmailStrategy, Configuration configuration) {
+    public OAuthLoginSuccessHandler(OAuth2AuthorizedClientService authorizedClientService, UserDetailsRepository userDetailsRepository, OAuthProviderRepository oAuthProviderRepository, UserEmailStrategyImpl userEmailStrategy, CustomLoginConfiguration customLoginConfiguration) {
         this.userDetailsRepository = userDetailsRepository;
         this.oAuthProviderRepository = oAuthProviderRepository;
         this.userEmailStrategy = userEmailStrategy;
-        this.configuration = configuration;
+        this.customLoginConfiguration = customLoginConfiguration;
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        log.debug("Login will redirect to {}", configuration.getRedirectUrl());
+        log.debug("Login will redirect to {}", customLoginConfiguration.getRedirectUrl());
         OAuth2AuthenticationToken auth = (OAuth2AuthenticationToken) authentication;
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         OAuthProvider oauthProvider = oAuthProviderRepository.findByProvider(Provider.valueOf(auth.getAuthorizedClientRegistrationId().toUpperCase())).get();
@@ -72,7 +72,7 @@ public class OAuthLoginSuccessHandler extends VaadinSavedRequestAwareAuthenticat
         } else {
             log.info("User already logged with {} provider", userDetails.getProvider().getProvider());
         }
-        setDefaultTargetUrl(new StringBuilder(this.configuration.getRedirectUrl()).append("userId=").append(userDetails.getUuid().toString()).toString());
+        setDefaultTargetUrl(new StringBuilder(this.customLoginConfiguration.getRedirectUrl()).append("userId=").append(userDetails.getUuid().toString()).toString());
         super.onAuthenticationSuccess(request, response, authentication);
         log.debug("Redirected");
     }

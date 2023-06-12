@@ -29,7 +29,6 @@ public class UserDetails implements Serializable {
     @NotNull
     private String email;
     private LocalDateTime lastLogin;
-
     @ManyToOne
     @JoinColumn(name = "fk_provider_id")
     @MapsId("fkProviderId")

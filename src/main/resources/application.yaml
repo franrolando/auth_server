@@ -1,6 +1,8 @@
 login:
+  custom-login: ${CUSTOM_LOGIN}
   application-domain: ${APP_DOMAIN}
   redirect-url: ${REDIRECT_URL}
+  enable-redirect: ${ENABLE_REDIRECT}
 spring:
   devtools:
     add-properties: false
@@ -41,3 +43,4 @@ vaadin:
 logging:
   level:
     com.component.authserver: DEBUG
+#    org.springframework.security: TRACE

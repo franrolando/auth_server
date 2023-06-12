@@ -1,51 +1,49 @@
 package com.component.authserver.service;
 
-import com.component.authserver.config.Configuration;
+import com.component.authserver.config.CustomLoginConfiguration;
 import com.component.authserver.entity.Users;
-import com.vaadin.flow.server.VaadinServletResponse;
+import com.component.authserver.exception.PasswordCredentialsException;
+import com.component.authserver.exception.UsernameCredentialsException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
-
-@Service
 @Slf4j
-public class LoginService implements ILoginService {
+public abstract class LoginService implements ILoginService {
 
     private IUserDetailsService iUserDetailsService;
-
     private IUsersService iUsersService;
-
     private PasswordEncoder passwordEncoder;
-    private Configuration configuration;
-    public LoginService(IUserDetailsService iUserDetailsService, IUsersService iUsersService, Configuration configuration) {
+    protected CustomLoginConfiguration customLoginConfiguration;
+
+    public LoginService(IUserDetailsService iUserDetailsService, IUsersService iUsersService, CustomLoginConfiguration customLoginConfiguration, PasswordEncoder passwordEncoder) {
         this.iUserDetailsService = iUserDetailsService;
         this.iUsersService = iUsersService;
-        this.configuration = configuration;
+        this.customLoginConfiguration = customLoginConfiguration;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public void signIn(String username, String password) throws IOException {
+    public void signIn(String username, String password) {
         if (iUserDetailsService.findByEmail(username).isPresent()) {
             log.info("User already registered with OAuth");
-            redirectToUrl();
+            userAuthenticationSuccessfully();
         } else {
-            Users user = iUsersService.findByUsernameAndPassword(username, password).orElseThrow(RuntimeException::new);
+            Users user = iUsersService.findByUsernameAndPassword(username, password).orElseThrow(UsernameCredentialsException::new);
             if (passwordEncoder.matches(password, user.getPassword())) {
-                redirectToUrl();
+                userAuthenticationSuccessfully();
             } else {
-                throw new RuntimeException("Password does not match");
+                throw new PasswordCredentialsException();
             }
         }
     }
 
-    private void redirectToUrl() throws IOException {
-        VaadinServletResponse.getCurrent().sendRedirect(this.configuration.getRedirectUrl());
-    }
+    protected abstract void userAuthenticationSuccessfully();
 
     @Override
-    public void signUp(String username, String password) throws IOException {
+    public void signUp(String username, String password) {
         if (iUserDetailsService.findByEmail(username).isPresent()) {
             throw new RuntimeException("Email already registered with an OAuth provider");
         } else {
