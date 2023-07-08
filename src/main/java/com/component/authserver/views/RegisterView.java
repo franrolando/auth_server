@@ -1,6 +1,7 @@
 package com.component.authserver.views;
 
 import com.component.authserver.config.CustomLoginConfiguration;
+import com.component.authserver.dto.RegisterUserDTO;
 import com.component.authserver.handler.OAuthLoginSuccessHandler;
 import com.component.authserver.repository.OAuthProviderRepository;
 import com.component.authserver.service.ILoginService;
@@ -12,6 +13,7 @@ import com.vaadin.flow.component.littemplate.LitTemplate;
 import com.vaadin.flow.component.template.Id;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,6 +61,9 @@ public class RegisterView extends LitTemplate {
     }
 
     public void init() {
+        RegisterUserDTO registerUserDTO = new RegisterUserDTO();
+        Binder<RegisterUserDTO> binder = new Binder<>(RegisterUserDTO.class);
+        binder.readBean(registerUserDTO);
         signUpButton.addClickListener(e -> {
 
         });
