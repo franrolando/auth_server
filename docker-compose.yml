@@ -3,8 +3,6 @@ services:
   db:
     image: 'postgres:13.1-alpine'
     container_name: db
-    ports:
-      - "5452:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres1
@@ -16,8 +14,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - back
+
 
   authServer:
     image: 'franff96/auth_server:latest'
@@ -36,12 +33,5 @@ services:
       - ENV_PORT=8081
       - DB_USERNAME=postgres
       - DB_PASSWORD=postgres1
-    networks:
-      - back
-      - front
 
-networks:
-  back:
-    driver: bridge
-  front:
-    driver: bridge
+

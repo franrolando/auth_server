@@ -41,6 +41,7 @@
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-core</artifactId>
+                <version>${vaadin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -151,7 +152,7 @@
                     <container>
                         <mainClass>com.component.authserver.AuthServerApplication</mainClass>
                         <ports>
-                            <port>${ENV_PORT}</port>
+                            <port>${env.port}</port>
                         </ports>
                         <format>OCI</format>
                     </container>
